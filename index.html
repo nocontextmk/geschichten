@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Kurzgeschichten Luzern — jeden Tag</title>
+  <style>
+    /* Minimalistisches, kinderfreundliches Design */
+    :root{
+      --maxw:720px;
+      --bg:#ffffff;
+      --text:#0a0a0a;
+      --muted:#5a5a5a;
+      --accent:#0b5ed7;
+      --paper:#fbfbfb;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    html,body{height:100%;margin:0;background:var(--bg);color:var(--text)}
+    .wrap{max-width:var(--maxw);margin:28px auto;padding:28px;background:var(--paper);border-radius:14px;box-shadow:0 6px 24px rgba(10,10,10,0.06)}
+    header{display:flex;align-items:center;gap:12px}
+    h1{font-size:20px;margin:0}
+    p.lead{margin:8px 0 18px;color:var(--muted);font-size:14px}
+    .meta{font-size:13px;color:var(--muted);margin-bottom:18px}
+    .stories{display:flex;flex-direction:column;gap:18px}
+    article.story{padding:18px;border-radius:10px;background:white;box-shadow:0 1px 0 rgba(0,0,0,0.04)}
+    article.story h2{margin:0 0 8px;font-size:16px}
+    article.story p{margin:0 0 10px;line-height:1.45;font-size:15px}
+    .vocab{margin-top:12px;font-size:14px;color:var(--muted)}
+    footer{margin-top:18px;font-size:13px;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+    .small{font-size:12px;color:var(--muted)}
+    .btn{background:transparent;border:1px solid var(--accent);color:var(--accent);padding:6px 10px;border-radius:8px;font-size:13px;cursor:pointer}
+    .hidden{display:none}
+    @media (max-width:520px){.wrap{margin:12px;padding:16px;border-radius:10px}}
+  </style>
+</head>
+<body>
+  <main class="wrap" role="main" aria-labelledby="title">
+    <header>
+      <svg width="44" height="44" viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="1.5" y="3" width="21" height="18" rx="3" fill="#0b5ed7" />
+        <circle cx="7.5" cy="10" r="1.6" fill="#fff" />
+        <circle cx="16.5" cy="14" r="1.6" fill="#fff" />
+      </svg>
+      <div>
+        <h1 id="title">Kurzgeschichten Luzern</h1>
+        <p class="lead">Jeden Tag neue, kurze Geschichten auf Deutsch — kindgerecht (≈ 8 Jahre). Fokus: Text, klare Sätze, Lernwörter.</p>
+      </div>
+    </header>
+
+    <div class="meta" id="meta">...lade...</div>
+
+    <section class="stories" id="stories" aria-live="polite">
+      <!-- Geschichten werden hier eingefügt -->
+    </section>
+
+    <footer>
+      <div class="small">Automatisch erzeugt anhand des Datums (Zeitzone: Europe/Zurich).</div>
+      <div>
+        <button class="btn" id="printBtn">Drucken</button>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+  // --- Hilfsfunktionen ---
+  function zurichNow() {
+    // Holt aktuelle Zeit in Europe/Zurich als Date-Objekt
+    // Achtung: erzeugt String via Intl und baut Date aus Teilen
+    const fmt = new Intl.DateTimeFormat('de-DE', {
+      timeZone: 'Europe/Zurich',
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit',
+      hour12: false
+    });
+    const parts = fmt.formatToParts(new Date());
+    const get = (t) => parts.find(p => p.type===t).value;
+    const s = `${get('year')}-${get('month')}-${get('day')}T${get('hour')}:${get('minute')}:${get('second')}`;
+    return new Date(s);
+  }
+
+  function pad(n){return n.toString().padStart(2,'0')}
+
+  // Deterministischer "Seed" pro Datum: dadurch sind Geschichten für jeden Tag reproduzierbar
+  function dateSeedKey(d) {
+    // d: Date (Zurich). Verwende ISO-Date (YYYY-MM-DD)
+    return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate());
+  }
+
+  function seededRandom(seed) {
+    // einfacher LCG
+    let h = 2166136261 >>> 0;
+    for (let i=0;i<seed.length;i++) h = (h ^ seed.charCodeAt(i)) * 16777619 >>> 0;
+    let state = h;
+    return function() {
+      state = (state * 1664525 + 1013904223) >>> 0;
+      return state / 4294967296;
+    }
+  }
+
+  // Wortlisten und Themen — altersgerecht, schweizbezogen (Luzern)
+  const vocab = {
+    personen: ["Mia","Lukas","Paula","Jonas","Sara","Noah"],
+    orte: ["Luzern","See","Pilatus","Altstadt","Schule","Spielplatz"],
+    gegenstaende: ["Velo","Ball","Buch","Rucksack","Lampe","Brille"],
+    tiere: ["Hund","Katze","Ente","Fisch","Kuh","Ameise"],
+    aktivitaeten: ["fahren","lesen","spielen","rennen","malen","lernen"],
+    gefuehle: ["glücklich","neugierig","mutig","ruhig","aufgeregt","stolz"],
+    lehrthemen: ["Natur","Wetter","Verkehrssicherheit","Zahlen","Lesen","Freundschaft"]
+  };
+
+  // Templates: längere und kürzere Geschichten
+  function generateStoryLong(rng, key) {
+    const name = choose(rng, vocab.personen);
+    const place = choose(rng, vocab.orte);
+    const object = choose(rng, vocab.gegenstaende);
+    const animal = choose(rng, vocab.tiere);
+    const activity = choose(rng, vocab.aktivitaeten);
+    const feeling = choose(rng, vocab.gefuehle);
+    const topic = choose(rng, vocab.lehrthemen);
+
+    const lines = [
+      `${name} wohnt in ${place}.`,
+      `Heute ist ein besonderer Tag: ${name} möchte ${activity} lernen und ist sehr ${feeling}.`,
+      `Am Morgen findet ${name} ein ${object} am Weg zum ${place}.`,
+      `Plötzlich sieht ${name} eine kleine ${animal} und hilft ihr. So lernt ${name} etwas Wichtiges über ${topic}.`,
+      `Auf dem Heimweg denkt ${name} nach. ${name} merkt: Mut und Freundlichkeit sind wichtig.`,
+      `Am Abend liest ${name} ein Buch und ist stolz auf den Tag.`
+    ];
+    return { title: `Der Tag von ${name}`, text: lines.join(" "), vocab: extractVocab(lines) };
+  }
+
+  function generateStoryShort(rng, key) {
+    const name = choose(rng, vocab.personen);
+    const object = choose(rng, vocab.gegenstaende);
+    const activity = choose(rng, vocab.aktivitaeten);
+    const place = choose(rng, vocab.orte);
+    const animal = choose(rng, vocab.tiere);
+
+    const lines = [
+      `${name} und das ${object}.`,
+      `${name} will ${activity} am ${place}.`,
+      `Eine ${animal} hilft dabei.`
+    ];
+    return { title: `${name} und das ${object}`, text: lines.join(" "), vocab: extractVocab(lines) };
+  }
+
+  function choose(rng, arr){ return arr[Math.floor(rng()*arr.length)]; }
+
+  function extractVocab(lines){
+    // einfache Wortliste: aufteile nach Wortgrenzen, entferne Satzzeichen, wähle kurze häufige Wörter
+    const words = new Set();
+    lines.forEach(L => {
+      L.replace(/[,\.!?:;]/g,'').split(/\s+/).forEach(w => {
+        const w2 = w.trim();
+        if (w2.length>0 && w2.length<=12) words.add(w2);
+      });
+    });
+    return Array.from(words);
+  }
+
+  // Erzeuge Geschichten für ein Datum (deterministisch)
+  function storiesForDate(d) {
+    const key = dateSeedKey(d);
+    const rng = seededRandom(key);
+    // Entscheide Länge: zufallswert -> bestimmt ob "groß" (lange) oder "kurz"
+    const longProb = rng();
+    const stories = [];
+    if (longProb < 0.5) {
+      // langer Tag — eine längere Geschichte
+      stories.push(generateStoryLong(rng, key));
+    } else {
+      // kurzer Tag — zwei kurze Geschichten
+      stories.push(generateStoryShort(rng, key));
+      // für zweite Geschichte verändere seed leicht
+      const rng2 = seededRandom(key + '-b');
+      stories.push(generateStoryShort(rng2, key+'-b'));
+    }
+    return stories;
+  }
+
+  // Anzeige-Logik:
+  // - Wenn lokale Zurich-Zeit >= 15:00 => zeige stories für heutiges Datum
+  // - Sonst zeige stories für gestern
+  function displayAppropriateStories() {
+    const now = zurichNow();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    const showDate = (hours > 15 || (hours === 15 && minutes >= 0)) ? now : new Date(now.getTime() - 24*3600*1000);
+    const dateStr = dateSeedKey(showDate);
+    const stories = storiesForDate(showDate);
+
+    const metaEl = document.getElementById('meta');
+    const storiesEl = document.getElementById('stories');
+    storiesEl.innerHTML = '';
+
+    metaEl.textContent = `Datum: ${dateStr} · Angezeigt ab 15:00 (Zeitzone Zürich). Anzahl Geschichten: ${stories.length}.`;
+
+    stories.forEach((s, idx) => {
+      const art = document.createElement('article'); art.className='story';
+      const h = document.createElement('h2'); h.textContent = s.title;
+      const p = document.createElement('p'); p.textContent = s.text;
+      art.appendChild(h); art.appendChild(p);
+
+      const vocabBox = document.createElement('div'); vocabBox.className='vocab';
+      vocabBox.innerHTML = `<strong>Wortschatz:</strong> ${s.vocab.join(', ')}.`;
+      art.appendChild(vocabBox);
+
+      storiesEl.appendChild(art);
+    });
+
+    // Zusatz: Hinweis zur Nutzbarkeit im Unterricht Luzern
+    const note = document.createElement('p');
+    note.className='small';
+    note.style.marginTop='8px';
+    note.textContent = 'Hinweis: Themen und Wörter sind altersgerecht (≈ 8 Jahre) und eignen sich für Leseübungen, Wortschatz und kurze Diskussionsaufgaben.';
+    storiesEl.appendChild(note);
+  }
+
+  // Beim Laden anzeigen
+  displayAppropriateStories();
+
+  // Druck-Button
+  document.getElementById('printBtn').addEventListener('click', ()=>window.print());
+
+  // Aktualisiere automatisch, falls Seite länger offen ist (check jede Minute)
+  setInterval(() => {
+    displayAppropriateStories();
+  }, 60_000);
+
+  </script>
+</body>
+</html>

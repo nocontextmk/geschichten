@@ -1,83 +1,160 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<title>Tägliche Kindergeschichte</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background: #f7f7f7;
-        margin: 0;
-        padding: 0;
-        line-height: 1.6;
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Kurzgeschichten Luzern — jeden Tag</title>
+  <style>
+    :root{
+      --maxw:720px; --bg:#fff; --text:#0a0a0a; --muted:#5a5a5a; --accent:#0b5ed7; --paper:#fbfbfb;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     }
-    header, footer {
-        text-align: center;
-        padding: 15px;
-        background: #ffffff;
-        font-size: 1.1rem;
-        border-bottom: 1px solid #ddd;
-    }
-    footer { border-top: 1px solid #ddd; border-bottom: none; }
-
-    /* --- STORY CONTAINER --- */
-    .story-area {
-        background: #fff6d5;
-        padding: 25px;
-        margin: 25px auto;
-        max-width: 800px;
-        border-radius: 12px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-
-    .title {
-        font-size: 1.8rem;
-        text-align: center;
-        margin-bottom: 20px;
-        color: #333;
-    }
-
-    .story-text p {
-        margin-bottom: 15px;
-        font-size: 1.2rem;
-    }
-</style>
+    html,body{height:100%;margin:0;background:var(--bg);color:var(--text)}
+    .wrap{max-width:var(--maxw);margin:28px auto;padding:28px;background:var(--paper);border-radius:14px;box-shadow:0 6px 24px rgba(10,10,10,0.06)}
+    header{display:flex;align-items:center;gap:12px}
+    h1{font-size:22px;margin:0}
+    p.lead{margin:8px 0 18px;color:var(--muted);font-size:15px}
+    .meta{font-size:13px;color:var(--muted);margin-bottom:18px}
+    .stories{display:flex;flex-direction:column;gap:18px}
+    article.story{padding:18px;border-radius:10px;background:white;box-shadow:0 1px 0 rgba(0,0,0,0.04);border:1px solid #e0e0e0}
+    article.story h2{margin:0 0 12px;font-size:18px}
+    article.story p{margin:0 0 14px;line-height:1.6;font-size:17px}
+    .vocab{margin-top:12px;font-size:14px;color:var(--muted)}
+    footer{margin-top:18px;font-size:13px;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+    .small{font-size:12px;color:var(--muted)}
+    .btn{background:transparent;border:1px solid var(--accent);color:var(--accent);padding:6px 10px;border-radius:8px;font-size:13px;cursor:pointer}
+  </style>
 </head>
 <body>
+  <main class="wrap" role="main" aria-labelledby="title">
+    <header>
+      <svg width="44" height="44" viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="1.5" y="3" width="21" height="18" rx="3" fill="#0b5ed7" />
+        <circle cx="7.5" cy="10" r="1.6" fill="#fff" />
+        <circle cx="16.5" cy="14" r="1.6" fill="#fff" />
+      </svg>
+      <div>
+        <h1 id="title">Kurzgeschichten Luzern</h1>
+        <p class="lead">Jeden Tag eine lange Geschichte auf Deutsch — kindgerecht (≈ 8 Jahre). Klarer Text, kurze Absätze, Lernwörter.</p>
+      </div>
+    </header>
 
-<header>
-    <strong>Tägliche Kindergeschichte – Luzern, Schweiz</strong><br>
-    Jeden Tag um 15:00 Uhr (Zürich Zeit) erscheint eine neue Geschichte.
-</header>
+    <div class="meta" id="meta">...lade...</div>
 
-<div class="story-area">
-    <div class="title">Die mutige Fahrt am Rotsee</div>
+    <section class="stories" id="stories" aria-live="polite"></section>
 
-    <div class="story-text">
+    <footer>
+      <div class="small">Automatisch erzeugt anhand des Datums (Zeitzone: Europe/Zurich).</div>
+      <div><button class="btn" id="printBtn">Drucken</button></div>
+    </footer>
+  </main>
 
-        <p>Es war ein sonniger Nachmittag in Luzern, und der achtjährige Leo fuhr mit seinem neuen Velo zum Rotsee.</p>
-        <p>Er liebte diesen Ort, weil dort oft Enten schwammen und die Berge im Wasser gespiegelt wurden.</p>
-        <p>Heute wollte Leo etwas Neues ausprobieren: eine längere Runde um den ganzen See.</p>
-        <p>Seine Mutter hatte ihm gesagt, dass er vorsichtig sein soll, aber Leo fühlte sich mutig und gut vorbereitet.</p>
-        <p>Auf dem Weg traf er seine Freundin Mia, die gerade ihr pinkes Velo putzte.</p>
-        <p>„Willst du mit mir um den Rotsee fahren?“, fragte Leo freundlich.</p>
-        <p>Mia überlegte kurz und nickte dann begeistert.</p>
-        <p>Gemeinsam fuhren sie los, zuerst langsam, damit sie sich gut aufwärmen konnten.</p>
-        <p>Unterwegs sahen sie ein Reh am Waldrand stehen, das ruhig zu ihnen herüberschaute.</p>
-        <p>Die Kinder blieben stehen und beobachteten es still, damit es nicht weglief.</p>
-        <p>Nach einer Minute hüpfte das Reh zurück in den Wald, und Leo und Mia setzten ihre Fahrt fort.</p>
-        <p>Einmal rutschte Leo fast auf kleinen Kieselsteinen aus, aber Mia warnte ihn rechtzeitig.</p>
-        <p>„Danke! Ohne dich wäre ich hingefallen!“, sagte Leo erleichtert.</p>
-        <p>Als sie die Runde beendet hatten, fühlten sie sich stolz und stark, weil sie es ganz alleine geschafft hatten.</p>
-        <p>Sie beschlossen, am nächsten Wochenende wiederzukommen – vielleicht mit einem Picknick.</p>
+  <script>
+  function zurichNow() {
+    const fmt = new Intl.DateTimeFormat('de-DE', {
+      timeZone: 'Europe/Zurich',
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit',
+      hour12: false
+    });
+    const parts = fmt.formatToParts(new Date());
+    const get = (t) => parts.find(p => p.type===t).value;
+    const s = `${get('year')}-${get('month')}-${get('day')}T${get('hour')}:${get('minute')}:${get('second')}`;
+    return new Date(s);
+  }
 
-    </div>
-</div>
+  function pad(n){return n.toString().padStart(2,'0')}
+  function dateSeedKey(d) { return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()); }
+  function seededRandom(seed) {
+    let h = 2166136261 >>> 0;
+    for (let i=0;i<seed.length;i++) h = (h ^ seed.charCodeAt(i)) * 16777619 >>> 0;
+    let state = h;
+    return function() { state = (state * 1664525 + 1013904223) >>> 0; return state / 4294967296; }
+  }
 
-<footer>
-    © 2025 – Geschichten für Kinder – Luzern
-</footer>
+  const vocab = {
+    personen: ["Mia","Lukas","Paula","Jonas","Sara","Noah"],
+    orte: ["Luzern","See","Pilatus","Altstadt","Schule","Spielplatz"],
+    gegenstaende: ["Velo","Ball","Buch","Rucksack","Lampe","Brille"],
+    tiere: ["Hund","Katze","Ente","Fisch","Kuh","Ameise"],
+    aktivitaeten: ["fahren","lesen","spielen","rennen","malen","lernen"],
+    gefuehle: ["glücklich","neugierig","mutig","ruhig","aufgeregt","stolz"],
+    lehrthemen: ["Natur","Wetter","Verkehrssicherheit","Zahlen","Lesen","Freundschaft"]
+  };
 
+  function choose(rng, arr){ return arr[Math.floor(rng()*arr.length)]; }
+
+  function generateLongStory(rng, key) {
+    const name = choose(rng,vocab.personen);
+    const place = choose(rng,vocab.orte);
+    const object = choose(rng,vocab.gegenstaende);
+    const animal = choose(rng,vocab.tiere);
+    const activity = choose(rng,vocab.aktivitaeten);
+    const feeling = choose(rng,vocab.gefuehle);
+    const topic = choose(rng,vocab.lehrthemen);
+
+    // 15+ Absätze für kinderfreundliches UX
+    const paragraphs = [
+      `${name} wohnt in ${place}. Heute ist ein schöner Tag und ${name} freut sich sehr.`,
+      `Am Morgen nimmt ${name} das ${object} und geht zur Schule. Unterwegs sieht ${name} die Sonne über ${place}.`,
+      `${name} trifft auf dem Spielplatz eine kleine ${animal}. Sie wirkt neugierig und freundlich.`,
+      `Vorsichtig hilft ${name} der ${animal} über einen kleinen Bach. Das macht ${name} stolz.`,
+      `In der Schule lernen die Kinder heute über ${topic}. ${name} hört aufmerksam zu.`,
+      `Die Lehrerin erklärt alles sehr gut, und ${name} versteht viele neue Dinge.`,
+      `Zur Pause spielen ${name} und die Freunde mit einem ${object}. Sie lachen und rennen umher.`,
+      `Nach der Schule fährt ${name} auf dem ${object} nach Hause. Die frische Luft macht ${name} glücklich.`,
+      `Unterwegs sieht ${name} den ${place} See. Dort schwimmen Enten, die ${name} fasziniert beobachtet.`,
+      `Zu Hause malt ${name} ein Bild von der kleinen ${animal} und der sonnigen Szene.`,
+      `Danach liest ${name} ein spannendes Buch über Abenteuer in ${place}.`,
+      `Am Abend erzählt ${name} den Eltern alles, was heute passiert ist.`,
+      `Sie sprechen gemeinsam über Freundschaft, Mut und die kleinen Abenteuer des Tages.`,
+      `Bevor ${name} ins Bett geht, denkt ${name} an die schönen Momente und fühlt sich zufrieden.`,
+      `Mit einem Lächeln schläft ${name} ein und freut sich auf die Abenteuer von morgen.`
+    ];
+    return {title: `Ein Tag mit ${name} in ${place}`, text: paragraphs, vocab: extractVocab(paragraphs)};
+  }
+
+  function extractVocab(lines){
+    const words = new Set();
+    lines.forEach(L => {
+      L.replace(/[,\.!?:;]/g,'').split(/\s+/).forEach(w => { const w2=w.trim(); if(w2.length>0 && w2.length<=12) words.add(w2); });
+    });
+    return Array.from(words);
+  }
+
+  function storiesForDate(d){
+    const key = dateSeedKey(d);
+    const rng = seededRandom(key);
+    return [generateLongStory(rng,key)];
+  }
+
+  function displayStories() {
+    const now = zurichNow();
+    const showDate = now.getHours() >= 15 ? now : new Date(now.getTime() - 24*3600*1000);
+    const dateStr = dateSeedKey(showDate);
+    const stories = storiesForDate(showDate);
+
+    document.getElementById('meta').textContent = `Datum: ${dateStr} · Angezeigt ab 15:00 (Zeitzone Zürich).`;
+
+    const storiesEl = document.getElementById('stories');
+    storiesEl.innerHTML='';
+    stories.forEach(s=>{
+      const art=document.createElement('article'); art.className='story';
+      const h=document.createElement('h2'); h.textContent=s.title;
+      art.appendChild(h);
+      s.text.forEach(p=>{
+        const pEl=document.createElement('p'); pEl.textContent=p; art.appendChild(pEl);
+      });
+      const vocabBox=document.createElement('div'); vocabBox.className='vocab';
+      vocabBox.innerHTML=`<strong>Wortschatz:</strong> ${s.vocab.join(', ')}.`;
+      art.appendChild(vocabBox);
+      storiesEl.appendChild(art);
+    });
+  }
+
+  displayStories();
+  document.getElementById('printBtn').addEventListener('click',()=>window.print());
+  setInterval(displayStories,60000);
+  </script>
 </body>
 </html>

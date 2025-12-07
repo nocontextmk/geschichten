@@ -20,10 +20,49 @@
     article.story h2{margin:0 0 12px;font-size:18px}
     article.story p{margin:0 0 14px;line-height:1.6;font-size:17px}
     .vocab{margin-top:12px;font-size:14px;color:var(--muted)}
-    footer{margin-top:18px;font-size:13px;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+    
+    /* Footer styles */
+    .main-footer{margin-top:32px;padding-top:24px;border-top:1px solid #eee}
+    .footer-content{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:24px}
+    .footer-left{flex:1;min-width:200px}
+    .footer-right{text-align:right}
+    .footer-buttons{display:flex;gap:10px}
+    
+    .footer-info{font-size:12px;line-height:1.5;color:var(--muted)}
+    .footer-info p{margin:0 0 8px 0}
+    .footer-links{display:flex;gap:16px;margin-top:12px}
+    .footer-links a{color:var(--accent);text-decoration:none;font-size:12px}
+    .footer-links a:hover{text-decoration:underline}
+    
+    .footer-meta{font-size:11px;color:#888;margin-top:16px;padding-top:12px;border-top:1px solid #f0f0f0}
+    .footer-meta span{display:inline-block;margin-right:12px}
+    
+    .project-badge{display:inline-flex;align-items:center;gap:4px;background:#f5f5f5;padding:4px 8px;border-radius:4px;font-size:11px;color:#666;margin-bottom:8px}
+    .project-badge::before{content:"⚡";font-size:10px}
+    
     .small{font-size:12px;color:var(--muted)}
-    .btn{background:transparent;border:1px solid var(--accent);color:var(--accent);padding:6px 10px;border-radius:8px;font-size:13px;cursor:pointer}
-    .btn:hover{background:rgba(11, 94, 215, 0.05)}
+    .btn{background:transparent;border:1px solid var(--accent);color:var(--accent);padding:6px 12px;border-radius:8px;font-size:13px;cursor:pointer;transition:all 0.2s ease}
+    .btn:hover{background:rgba(11, 94, 215, 0.08);transform:translateY(-1px)}
+    
+    /* Archive Modal Styles */
+    .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center}
+    .modal-content{background:var(--paper);padding:28px;border-radius:14px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto}
+    .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+    .modal-title{font-size:18px;font-weight:600;margin:0}
+    .close-btn{background:none;border:none;font-size:24px;cursor:pointer;color:var(--muted)}
+    .archive-list{display:flex;flex-direction:column;gap:12px}
+    .archive-item{padding:14px;border:1px solid #eee;border-radius:8px;cursor:pointer;transition:all 0.2s ease}
+    .archive-item:hover{background:#f9f9f9;border-color:#ddd;transform:translateY(-1px)}
+    .archive-date{font-weight:600;margin-bottom:4px}
+    .archive-titles{font-size:13px;color:var(--muted)}
+    
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+      .wrap{padding:20px;margin:15px auto;}
+      .footer-content{flex-direction:column;gap:16px}
+      .footer-right{text-align:left;width:100%}
+      .footer-buttons{justify-content:flex-start}
+    }
   </style>
 </head>
 <body>
@@ -44,16 +83,61 @@
 
     <section class="stories" id="stories" aria-live="polite"></section>
 
-    <footer>
-      <div class="small">Automatisch erzeugt anhand des Datums (Zeitzone: Europe/Zurich).</div>
-      <div class="footer-buttons">
-        <button class="btn" id="archiveBtn">Archiv</button>
-        <button class="btn" id="printBtn">Drucken</button>
+    <footer class="main-footer">
+      <div class="footer-content">
+        <div class="footer-left">
+          <div class="project-badge">Open Source Project</div>
+          <div class="footer-info">
+            <p>Ein pädagogisches Tool für Deutschlernende im Alter von 6–10 Jahren.</p>
+            <p>Kompatibel mit Schweizer Lehrplänen für die Primarstufe.</p>
+            <p>Generiert täglich neue Geschichten anhand des aktuellen Datums.</p>
+            
+            <div class="footer-links">
+              <a href="#" onclick="event.preventDefault(); alert('GitHub Repository wird bald verfügbar sein')">GitHub</a>
+              <a href="#" onclick="event.preventDefault(); alert('Dokumentation wird bald verfügbar sein')">Docs</a>
+              <a href="#" onclick="event.preventDefault(); alert('Beiträge willkommen! Kontaktieren Sie uns.')">Contributing</a>
+              <a href="#" onclick="event.preventDefault(); alert('Für Fragen oder Feedback')">Contact</a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-right">
+          <div class="footer-buttons">
+            <button class="btn" id="archiveBtn">Archiv</button>
+            <button class="btn" id="printBtn">Drucken</button>
+          </div>
+          <div class="small" style="margin-top:12px">
+            Generiert: <span id="genTime">--:--</span> Uhr<br>
+            Zeitzone: Europe/Zurich
+          </div>
+        </div>
+      </div>
+      
+      <div class="footer-meta">
+        <span>Version 1.0.0</span>
+        <span>MIT License</span>
+        <span>© 2025 Kurzgeschichten Luzern</span>
       </div>
     </footer>
   </main>
 
+  <!-- Archive Modal -->
+  <div class="modal" id="archiveModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Geschichten Archiv</h2>
+        <button class="close-btn" id="closeModal">&times;</button>
+      </div>
+      <div class="archive-list" id="archiveList">
+        <!-- Archive items will be loaded here -->
+      </div>
+      <div style="margin-top:20px;font-size:13px;color:var(--muted);text-align:center">
+        Wählen Sie ein Datum, um die Geschichten erneut anzuzeigen.
+      </div>
+    </div>
+  </div>
+
   <script>
+  // ----- UTILITY FUNCTIONS -----
   function zurichNow() {
     const fmt = new Intl.DateTimeFormat('de-DE', {
       timeZone: 'Europe/Zurich',
@@ -69,6 +153,16 @@
 
   function pad(n){return n.toString().padStart(2,'0')}
   function dateSeedKey(d) { return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()); }
+  function formatDateDisplay(d) {
+    const fmt = new Intl.DateTimeFormat('de-DE', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    return fmt.format(d);
+  }
+  
   function seededRandom(seed) {
     let h = 2166136261 >>> 0;
     for (let i=0;i<seed.length;i++) h = (h ^ seed.charCodeAt(i)) * 16777619 >>> 0;
@@ -76,14 +170,15 @@
     return function() { state = (state * 1664525 + 1013904223) >>> 0; return state / 4294967296; }
   }
 
+  // ----- VOCABULARY AND THEMES -----
   const vocab = {
-    personen: ["Mia","Lukas","Paula","Jonas","Sara","Noah","Ben","Emma","Lea","Finn"],
-    orte: ["Luzern","See","Pilatus","Altstadt","Schule","Spielplatz","Bibliothek","Markt","Wald","Brücke"],
-    gegenstaende: ["Velo","Ball","Buch","Rucksack","Lampe","Brille","Schlüssel","Luftballon","Korb","Schirm"],
-    tiere: ["Hund","Katze","Ente","Fisch","Kuh","Ameise","Schmetterling","Igel","Vogel","Libelle"],
-    aktivitaeten: ["fahren","lesen","spielen","rennen","malen","lernen","singen","suchen","bauen","helfen"],
-    gefuehle: ["glücklich","neugierig","mutig","ruhig","aufgeregt","stolz","freundlich","geduldig","fröhlich","zufrieden"],
-    lehrthemen: ["Natur","Wetter","Verkehrssicherheit","Zahlen","Lesen","Freundschaft","Farben","Tiere","Berufe","Musik"]
+    personen: ["Mia","Lukas","Paula","Jonas","Sara","Noah","Ben","Emma","Lea","Finn","Lina","Leo","Hanna","Luis","Marie"],
+    orte: ["Luzern","See","Pilatus","Altstadt","Schule","Spielplatz","Bibliothek","Markt","Wald","Brücke","Bahnhof","Park","Turnhalle","Bauernhof","Schwimmbad"],
+    gegenstaende: ["Velo","Ball","Buch","Rucksack","Lampe","Brille","Schlüssel","Luftballon","Korb","Schirm","Tafel","Stift","Federmäppchen","Pausenbrot","Wasserflasche"],
+    tiere: ["Hund","Katze","Ente","Fisch","Kuh","Ameise","Schmetterling","Igel","Vogel","Libelle","Hase","Biene","Schnecke","Maulwurf","Frosch"],
+    aktivitaeten: ["fahren","lesen","spielen","rennen","malen","lernen","singen","suchen","bauen","helfen","zählen","basteln","tanzen","erzählen","beobachten"],
+    gefuehle: ["glücklich","neugierig","mutig","ruhig","aufgeregt","stolz","freundlich","geduldig","fröhlich","zufrieden","hilfsbereit","konzentriert","entspannt","tapfer","fürsorglich"],
+    lehrthemen: ["Natur","Wetter","Verkehrssicherheit","Zahlen","Lesen","Freundschaft","Farben","Tiere","Berufe","Musik","Gesundheit","Umwelt","Gemeinschaft","Zeit","Formen"]
   };
 
   const themen = {
@@ -97,10 +192,21 @@
       "Ein Tag voller Farben",
       "Die hilfsbereite Geste",
       "Ein unerwartetes Abenteuer",
-      "Das Lächeln eines Fremden"
+      "Das Lächeln eines Fremden",
+      "Die geheimnisvolle Karte",
+      "Ein Tag am See",
+      "Die mutige Katze",
+      "Das besondere Geschenk",
+      "Abenteuer im Wald",
+      "Der hilfsbereite Nachbar",
+      "Eine Entdeckung im Garten",
+      "Das fröhliche Picknick",
+      "Die verlorene Brille",
+      "Ein Regentag voller Ideen"
     ]
   };
 
+  // ----- STORY GENERATION -----
   function choose(rng, arr){ return arr[Math.floor(rng()*arr.length)]; }
 
   function generateShortStory(rng, storyNum) {
@@ -111,7 +217,6 @@
     const feeling = choose(rng,vocab.gefuehle);
     const title = choose(rng,themen.kurzgeschichten);
 
-    // 4-6 краткие предложения для короткой истории
     const sentences = [
       `${name} ging an einem sonnigen Tag zum ${place}.`,
       `Plötzlich fand ${name} einen ${object} auf dem Boden.`,
@@ -120,11 +225,17 @@
       `Die ${animal} sah freundlich aus und folgte ${name} ein Stück.`,
       `Zum Glück fand ${name} die Besitzerin des ${object} am ${place}.`,
       `Es war eine ältere Frau, die sehr dankbar war.`,
-      `${name} fühlte sich ${feeling} und lächelte den ganzen Weg nach Hause.`
+      `${name} fühlte sich ${feeling} und lächelte den ganzen Weg nach Hause.`,
+      `Am nächsten Tag erzählte ${name} die Geschichte in der Schule.`,
+      `Alle Kinder waren beeindruckt von ${name}s Erlebnis.`,
+      `Die Lehrerin lobte ${name} für die hilfsbereite Tat.`,
+      `${name} zeigte den ${object} allen in der Klasse.`,
+      `Gemeinsam überlegten sie, was man mit einem ${object} alles machen kann.`,
+      `Zum Schluss malten alle ein Bild von der Begegnung mit der ${animal}.`,
+      `${name} beschloss, immer aufmerksam durch die Welt zu gehen.`
     ];
 
-    // Выбираем 4-6 случайных предложений
-    const sentenceCount = 4 + Math.floor(rng() * 3); // 4, 5 или 6
+    const sentenceCount = 4 + Math.floor(rng() * 3);
     const shuffled = [...sentences].sort(() => rng() - 0.5);
     const storyText = shuffled.slice(0, sentenceCount);
 
@@ -155,6 +266,121 @@
     ];
   }
 
+  // ----- ARCHIVE SYSTEM -----
+  function saveToArchive(date, stories) {
+    try {
+      const archive = JSON.parse(localStorage.getItem('storyArchive') || '{}');
+      if (!archive[date]) {
+        archive[date] = {
+          date: date,
+          displayDate: formatDateDisplay(new Date(date + 'T12:00:00')),
+          stories: stories.map(s => ({
+            title: s.title,
+            text: s.text,
+            vocab: s.vocab
+          }))
+        };
+        localStorage.setItem('storyArchive', JSON.stringify(archive));
+      }
+    } catch (e) {
+      console.error('Error saving to archive:', e);
+    }
+  }
+
+  function loadArchive() {
+    try {
+      return JSON.parse(localStorage.getItem('storyArchive') || '{}');
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function showArchiveModal() {
+    const archive = loadArchive();
+    const archiveList = document.getElementById('archiveList');
+    const modal = document.getElementById('archiveModal');
+    
+    // Get sorted dates (newest first)
+    const dates = Object.keys(archive).sort().reverse();
+    
+    if (dates.length === 0) {
+      archiveList.innerHTML = '<p style="text-align:center;color:var(--muted);">Noch keine Geschichten im Archiv.</p>';
+    } else {
+      archiveList.innerHTML = dates.map(date => {
+        const item = archive[date];
+        return `
+          <div class="archive-item" data-date="${date}">
+            <div class="archive-date">${item.displayDate}</div>
+            <div class="archive-titles">
+              ${item.stories.map(s => s.title.replace('1. ', '').replace('2. ', '')).join(' • ')}
+            </div>
+          </div>
+        `;
+      }).join('');
+      
+      // Add click handlers
+      document.querySelectorAll('.archive-item').forEach(item => {
+        item.addEventListener('click', function() {
+          const date = this.getAttribute('data-date');
+          loadArchiveStories(date);
+          modal.style.display = 'none';
+        });
+      });
+    }
+    
+    modal.style.display = 'flex';
+  }
+
+  function loadArchiveStories(date) {
+    const archive = loadArchive();
+    const stories = archive[date]?.stories;
+    
+    if (stories) {
+      document.getElementById('meta').textContent = `Archiv: ${archive[date].displayDate} · Zwei kurze Geschichten.`;
+      
+      const storiesEl = document.getElementById('stories');
+      storiesEl.innerHTML = '';
+      
+      stories.forEach(s => {
+        const art = document.createElement('article'); 
+        art.className = 'story';
+        
+        const h = document.createElement('h2'); 
+        h.textContent = s.title;
+        art.appendChild(h);
+        
+        s.text.forEach(p => {
+          const pEl = document.createElement('p'); 
+          pEl.textContent = p; 
+          art.appendChild(pEl);
+        });
+        
+        const vocabBox = document.createElement('div'); 
+        vocabBox.className = 'vocab';
+        vocabBox.innerHTML = `<strong>Wortschatz:</strong> ${s.vocab.join(', ')}.`;
+        art.appendChild(vocabBox);
+        
+        storiesEl.appendChild(art);
+      });
+      
+      // Add back button
+      const backBtn = document.createElement('button');
+      backBtn.className = 'btn';
+      backBtn.textContent = '← Zurück zu heute';
+      backBtn.style.marginTop = '20px';
+      backBtn.onclick = displayStories;
+      storiesEl.appendChild(backBtn);
+    }
+  }
+
+  // ----- UPDATE GENERATION TIME -----
+  function updateGenerationTime() {
+    const now = zurichNow();
+    const timeStr = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+    document.getElementById('genTime').textContent = timeStr;
+  }
+
+  // ----- MAIN DISPLAY -----
   function displayStories() {
     const now = zurichNow();
     const showDate = now.getHours() >= 15 ? now : new Date(now.getTime() - 24*3600*1000);
@@ -165,38 +391,56 @@
 
     const storiesEl = document.getElementById('stories');
     storiesEl.innerHTML='';
-    stories.forEach(s=>{
-      const art=document.createElement('article'); 
-      art.className='story';
+    
+    stories.forEach(s => {
+      const art = document.createElement('article'); 
+      art.className = 'story';
       
-      const h=document.createElement('h2'); 
-      h.textContent=s.title;
+      const h = document.createElement('h2'); 
+      h.textContent = s.title;
       art.appendChild(h);
       
-      s.text.forEach(p=>{
-        const pEl=document.createElement('p'); 
-        pEl.textContent=p; 
+      s.text.forEach(p => {
+        const pEl = document.createElement('p'); 
+        pEl.textContent = p; 
         art.appendChild(pEl);
       });
       
-      const vocabBox=document.createElement('div'); 
-      vocabBox.className='vocab';
-      vocabBox.innerHTML=`<strong>Wortschatz:</strong> ${s.vocab.join(', ')}.`;
+      const vocabBox = document.createElement('div'); 
+      vocabBox.className = 'vocab';
+      vocabBox.innerHTML = `<strong>Wortschatz:</strong> ${s.vocab.join(', ')}.`;
       art.appendChild(vocabBox);
       
       storiesEl.appendChild(art);
     });
+    
+    // Save to archive
+    saveToArchive(dateStr, stories);
+    updateGenerationTime();
   }
 
-  displayStories();
-  
-  document.getElementById('printBtn').addEventListener('click',()=>window.print());
-  
-  document.getElementById('archiveBtn').addEventListener('click', function() {
-    alert("Das Archiv wird bald verfügbar sein! Hier können Sie ältere Geschichten lesen.");
+  // ----- INITIALIZATION -----
+  document.addEventListener('DOMContentLoaded', function() {
+    displayStories();
+    
+    // Event Listeners
+    document.getElementById('printBtn').addEventListener('click', () => window.print());
+    document.getElementById('archiveBtn').addEventListener('click', showArchiveModal);
+    document.getElementById('closeModal').addEventListener('click', function() {
+      document.getElementById('archiveModal').style.display = 'none';
+    });
+    
+    // Close modal when clicking outside
+    document.getElementById('archiveModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        this.style.display = 'none';
+      }
+    });
+    
+    // Auto-refresh every minute
+    setInterval(displayStories, 60000);
+    setInterval(updateGenerationTime, 30000);
   });
-  
-  setInterval(displayStories, 60000);
   </script>
 </body>
 </html>

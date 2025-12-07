@@ -23,6 +23,7 @@
     footer{margin-top:18px;font-size:13px;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
     .small{font-size:12px;color:var(--muted)}
     .btn{background:transparent;border:1px solid var(--accent);color:var(--accent);padding:6px 10px;border-radius:8px;font-size:13px;cursor:pointer}
+    .btn:hover{background:rgba(11, 94, 215, 0.05)}
   </style>
 </head>
 <body>
@@ -35,7 +36,7 @@
       </svg>
       <div>
         <h1 id="title">Kurzgeschichten Luzern</h1>
-        <p class="lead">Jeden Tag eine lange Geschichte auf Deutsch — kindgerecht (≈ 8 Jahre). Klarer Text, kurze Absätze, Lernwörter.</p>
+        <p class="lead">Jeden Tag zwei kurze Geschichten auf Deutsch — kindgerecht (≈ 8 Jahre). Klarer Text, kurze Absätze, Lernwörter.</p>
       </div>
     </header>
 
@@ -45,7 +46,10 @@
 
     <footer>
       <div class="small">Automatisch erzeugt anhand des Datums (Zeitzone: Europe/Zurich).</div>
-      <div><button class="btn" id="printBtn">Drucken</button></div>
+      <div class="footer-buttons">
+        <button class="btn" id="archiveBtn">Archiv</button>
+        <button class="btn" id="printBtn">Drucken</button>
+      </div>
     </footer>
   </main>
 
@@ -73,51 +77,71 @@
   }
 
   const vocab = {
-    personen: ["Mia","Lukas","Paula","Jonas","Sara","Noah"],
-    orte: ["Luzern","See","Pilatus","Altstadt","Schule","Spielplatz"],
-    gegenstaende: ["Velo","Ball","Buch","Rucksack","Lampe","Brille"],
-    tiere: ["Hund","Katze","Ente","Fisch","Kuh","Ameise"],
-    aktivitaeten: ["fahren","lesen","spielen","rennen","malen","lernen"],
-    gefuehle: ["glücklich","neugierig","mutig","ruhig","aufgeregt","stolz"],
-    lehrthemen: ["Natur","Wetter","Verkehrssicherheit","Zahlen","Lesen","Freundschaft"]
+    personen: ["Mia","Lukas","Paula","Jonas","Sara","Noah","Ben","Emma","Lea","Finn"],
+    orte: ["Luzern","See","Pilatus","Altstadt","Schule","Spielplatz","Bibliothek","Markt","Wald","Brücke"],
+    gegenstaende: ["Velo","Ball","Buch","Rucksack","Lampe","Brille","Schlüssel","Luftballon","Korb","Schirm"],
+    tiere: ["Hund","Katze","Ente","Fisch","Kuh","Ameise","Schmetterling","Igel","Vogel","Libelle"],
+    aktivitaeten: ["fahren","lesen","spielen","rennen","malen","lernen","singen","suchen","bauen","helfen"],
+    gefuehle: ["glücklich","neugierig","mutig","ruhig","aufgeregt","stolz","freundlich","geduldig","fröhlich","zufrieden"],
+    lehrthemen: ["Natur","Wetter","Verkehrssicherheit","Zahlen","Lesen","Freundschaft","Farben","Tiere","Berufe","Musik"]
+  };
+
+  const themen = {
+    kurzgeschichten: [
+      "Der vergessene Schlüssel",
+      "Ein besonderer Fund",
+      "Die mutige Entscheidung",
+      "Eine kleine Überraschung",
+      "Freundschaft im Park",
+      "Das geheimnisvolle Geräusch",
+      "Ein Tag voller Farben",
+      "Die hilfsbereite Geste",
+      "Ein unerwartetes Abenteuer",
+      "Das Lächeln eines Fremden"
+    ]
   };
 
   function choose(rng, arr){ return arr[Math.floor(rng()*arr.length)]; }
 
-  function generateLongStory(rng, key) {
+  function generateShortStory(rng, storyNum) {
     const name = choose(rng,vocab.personen);
     const place = choose(rng,vocab.orte);
     const object = choose(rng,vocab.gegenstaende);
     const animal = choose(rng,vocab.tiere);
-    const activity = choose(rng,vocab.aktivitaeten);
     const feeling = choose(rng,vocab.gefuehle);
-    const topic = choose(rng,vocab.lehrthemen);
+    const title = choose(rng,themen.kurzgeschichten);
 
-    // 15+ Absätze für kinderfreundliches UX
-    const paragraphs = [
-      `${name} wohnt in ${place}. Heute ist ein schöner Tag und ${name} freut sich sehr.`,
-      `Am Morgen nimmt ${name} das ${object} und geht zur Schule. Unterwegs sieht ${name} die Sonne über ${place}.`,
-      `${name} trifft auf dem Spielplatz eine kleine ${animal}. Sie wirkt neugierig und freundlich.`,
-      `Vorsichtig hilft ${name} der ${animal} über einen kleinen Bach. Das macht ${name} stolz.`,
-      `In der Schule lernen die Kinder heute über ${topic}. ${name} hört aufmerksam zu.`,
-      `Die Lehrerin erklärt alles sehr gut, und ${name} versteht viele neue Dinge.`,
-      `Zur Pause spielen ${name} und die Freunde mit einem ${object}. Sie lachen und rennen umher.`,
-      `Nach der Schule fährt ${name} auf dem ${object} nach Hause. Die frische Luft macht ${name} glücklich.`,
-      `Unterwegs sieht ${name} den ${place} See. Dort schwimmen Enten, die ${name} fasziniert beobachtet.`,
-      `Zu Hause malt ${name} ein Bild von der kleinen ${animal} und der sonnigen Szene.`,
-      `Danach liest ${name} ein spannendes Buch über Abenteuer in ${place}.`,
-      `Am Abend erzählt ${name} den Eltern alles, was heute passiert ist.`,
-      `Sie sprechen gemeinsam über Freundschaft, Mut und die kleinen Abenteuer des Tages.`,
-      `Bevor ${name} ins Bett geht, denkt ${name} an die schönen Momente und fühlt sich zufrieden.`,
-      `Mit einem Lächeln schläft ${name} ein und freut sich auf die Abenteuer von morgen.`
+    // 4-6 краткие предложения для короткой истории
+    const sentences = [
+      `${name} ging an einem sonnigen Tag zum ${place}.`,
+      `Plötzlich fand ${name} einen ${object} auf dem Boden.`,
+      `${name} war ${feeling} und überlegte, wem der ${object} gehören könnte.`,
+      `Auf der Suche nach dem Besitzer traf ${name} eine kleine ${animal}.`,
+      `Die ${animal} sah freundlich aus und folgte ${name} ein Stück.`,
+      `Zum Glück fand ${name} die Besitzerin des ${object} am ${place}.`,
+      `Es war eine ältere Frau, die sehr dankbar war.`,
+      `${name} fühlte sich ${feeling} und lächelte den ganzen Weg nach Hause.`
     ];
-    return {title: `Ein Tag mit ${name} in ${place}`, text: paragraphs, vocab: extractVocab(paragraphs)};
+
+    // Выбираем 4-6 случайных предложений
+    const sentenceCount = 4 + Math.floor(rng() * 3); // 4, 5 или 6
+    const shuffled = [...sentences].sort(() => rng() - 0.5);
+    const storyText = shuffled.slice(0, sentenceCount);
+
+    return {
+      title: storyNum === 1 ? `1. ${title}` : `2. ${title}`,
+      text: storyText,
+      vocab: extractVocab(storyText)
+    };
   }
 
   function extractVocab(lines){
     const words = new Set();
     lines.forEach(L => {
-      L.replace(/[,\.!?:;]/g,'').split(/\s+/).forEach(w => { const w2=w.trim(); if(w2.length>0 && w2.length<=12) words.add(w2); });
+      L.replace(/[,\.!?:;]/g,'').split(/\s+/).forEach(w => { 
+        const w2 = w.trim(); 
+        if(w2.length > 0 && w2.length <= 12) words.add(w2); 
+      });
     });
     return Array.from(words);
   }
@@ -125,7 +149,10 @@
   function storiesForDate(d){
     const key = dateSeedKey(d);
     const rng = seededRandom(key);
-    return [generateLongStory(rng,key)];
+    return [
+      generateShortStory(rng, 1),
+      generateShortStory(rng, 2)
+    ];
   }
 
   function displayStories() {
@@ -134,27 +161,42 @@
     const dateStr = dateSeedKey(showDate);
     const stories = storiesForDate(showDate);
 
-    document.getElementById('meta').textContent = `Datum: ${dateStr} · Angezeigt ab 15:00 (Zeitzone Zürich).`;
+    document.getElementById('meta').textContent = `Datum: ${dateStr} · Zwei kurze Geschichten (je 4-6 Sätze). Angezeigt ab 15:00 (Zeitzone Zürich).`;
 
     const storiesEl = document.getElementById('stories');
     storiesEl.innerHTML='';
     stories.forEach(s=>{
-      const art=document.createElement('article'); art.className='story';
-      const h=document.createElement('h2'); h.textContent=s.title;
+      const art=document.createElement('article'); 
+      art.className='story';
+      
+      const h=document.createElement('h2'); 
+      h.textContent=s.title;
       art.appendChild(h);
+      
       s.text.forEach(p=>{
-        const pEl=document.createElement('p'); pEl.textContent=p; art.appendChild(pEl);
+        const pEl=document.createElement('p'); 
+        pEl.textContent=p; 
+        art.appendChild(pEl);
       });
-      const vocabBox=document.createElement('div'); vocabBox.className='vocab';
+      
+      const vocabBox=document.createElement('div'); 
+      vocabBox.className='vocab';
       vocabBox.innerHTML=`<strong>Wortschatz:</strong> ${s.vocab.join(', ')}.`;
       art.appendChild(vocabBox);
+      
       storiesEl.appendChild(art);
     });
   }
 
   displayStories();
+  
   document.getElementById('printBtn').addEventListener('click',()=>window.print());
-  setInterval(displayStories,60000);
+  
+  document.getElementById('archiveBtn').addEventListener('click', function() {
+    alert("Das Archiv wird bald verfügbar sein! Hier können Sie ältere Geschichten lesen.");
+  });
+  
+  setInterval(displayStories, 60000);
   </script>
 </body>
 </html>

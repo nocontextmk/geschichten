@@ -113,6 +113,40 @@
       }
     }
     
+    /* ЗГОЛЕМЕН ПОПАП ЗА МОНИТОРИ НАД 20 ИНЧИ (1920px+) */
+    @media (min-width: 1920px) {
+      .story-popup {
+        max-width: 1400px !important; /* Зголемено од ~90% на 1400px */
+        padding: 60px !important; /* Зголемен padding */
+        border-radius: 30px !important; /* Зголемен радиус */
+      }
+      
+      .story-popup-content h2 {
+        font-size: 42px !important; /* Зголемена големина на фонт */
+        margin-bottom: 32px !important;
+      }
+      
+      .story-popup-content p {
+        font-size: 32px !important; /* Зголемена големина на фонт */
+        line-height: 2.0 !important;
+        margin-bottom: 28px !important;
+      }
+      
+      .story-popup-content .vocab {
+        font-size: 28px !important; /* Зголемена големина на фонт */
+        margin-top: 40px !important;
+        padding-top: 28px;
+      }
+      
+      .close-popup-btn {
+        top: 30px !important;
+        right: 30px !important;
+        font-size: 48px !important;
+        width: 70px !important;
+        height: 70px !important;
+      }
+    }
+    
     /* Footer styles - ОРИГИНАЛНИТЕ СТИЛОВИ ЗА ФУТЕР */
     .main-footer{margin-top:32px;padding-top:24px;border-top:1px solid #eee}
     .footer-content{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:24px}
@@ -148,12 +182,42 @@
     .archive-date{font-weight:600;margin-bottom:4px}
     .archive-titles{font-size:13px;color:var(--muted)}
     
-    /* Responsive adjustments */
+    /* Responsive adjustments - ЗА МОБИЛНА ВЕРЗИЈА */
     @media (max-width: 600px) {
       .wrap{padding:20px;margin:15px auto;}
       .footer-content{flex-direction:column;gap:16px}
       .footer-right{text-align:left;width:100%}
       .footer-buttons{justify-content:flex-start}
+      
+      /* Мобилна верзија за попап - останува иста */
+      .story-popup {
+        padding: 30px !important;
+        max-width: 95% !important;
+      }
+      
+      .story-popup-content h2 {
+        font-size: 24px !important;
+        margin-bottom: 18px !important;
+      }
+      
+      .story-popup-content p {
+        font-size: 18px !important;
+        line-height: 1.6 !important;
+        margin-bottom: 16px !important;
+      }
+      
+      .story-popup-content .vocab {
+        font-size: 16px !important;
+        margin-top: 24px !important;
+      }
+      
+      .close-popup-btn {
+        top: 15px !important;
+        right: 15px !important;
+        font-size: 28px !important;
+        width: 40px !important;
+        height: 40px !important;
+      }
     }
   </style>
 </head>

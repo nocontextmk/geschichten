@@ -16,12 +16,104 @@
     p.lead{margin:8px 0 18px;color:var(--muted);font-size:15px}
     .meta{font-size:13px;color:var(--muted);margin-bottom:18px}
     .stories{display:flex;flex-direction:column;gap:18px}
-    article.story{padding:18px;border-radius:10px;background:white;box-shadow:0 1px 0 rgba(0,0,0,0.04);border:1px solid #e0e0e0}
+    article.story{padding:18px;border-radius:10px;background:white;box-shadow:0 1px 0 rgba(0,0,0,0.04);border:1px solid #e0e0e0;transition:all 0.3s ease}
     article.story h2{margin:0 0 12px;font-size:18px}
     article.story p{margin:0 0 14px;line-height:1.6;font-size:17px}
     .vocab{margin-top:12px;font-size:14px;color:var(--muted)}
     
-    /* Footer styles */
+    /* Story popup styles */
+    .story-popup-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .story-popup {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 90%;
+      max-height: 90%;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      animation: popupFade 0.3s ease;
+    }
+    
+    @keyframes popupFade {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    
+    .story-popup-content h2 {
+      font-size: 32px !important;
+      margin-bottom: 24px !important;
+      color: #0b5ed7;
+    }
+    
+    .story-popup-content p {
+      font-size: 24px !important;
+      line-height: 1.8 !important;
+      margin-bottom: 20px !important;
+    }
+    
+    .story-popup-content .vocab {
+      font-size: 20px !important;
+      margin-top: 30px !important;
+      padding-top: 20px;
+      border-top: 2px solid #eee;
+    }
+    
+    .close-popup-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: none;
+      font-size: 36px;
+      color: var(--muted);
+      cursor: pointer;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: all 0.2s ease;
+    }
+    
+    .close-popup-btn:hover {
+      background: #f5f5f5;
+      color: #333;
+    }
+    
+    /* Only enable click-to-enlarge on larger screens */
+    @media (max-width: 1366px) {
+      article.story { cursor: default !important; }
+      article.story:hover { transform: none !important; }
+    }
+    
+    @media (min-width: 1367px) {
+      article.story {
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      article.story:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border-color: #0b5ed7;
+      }
+    }
+    
+    /* Footer styles - ОРИГИНАЛНИТЕ СТИЛОВИ ЗА ФУТЕР */
     .main-footer{margin-top:32px;padding-top:24px;border-top:1px solid #eee}
     .footer-content{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:24px}
     .footer-left{flex:1;min-width:200px}
@@ -66,6 +158,16 @@
   </style>
 </head>
 <body>
+  <!-- Story Popup Overlay -->
+  <div class="story-popup-overlay" id="storyPopupOverlay">
+    <div class="story-popup">
+      <button class="close-popup-btn" id="closePopupBtn">&times;</button>
+      <div class="story-popup-content" id="storyPopupContent">
+        <!-- Popup content will be inserted here -->
+      </div>
+    </div>
+  </div>
+
   <main class="wrap" role="main" aria-labelledby="title">
     <header>
       <svg width="44" height="44" viewBox="0 0 24 24" aria-hidden="true">
@@ -266,6 +368,31 @@
     ];
   }
 
+  // ----- STORY POPUP FUNCTIONS -----
+  function showStoryPopup(story) {
+    const overlay = document.getElementById('storyPopupOverlay');
+    const content = document.getElementById('storyPopupContent');
+    
+    // Create enlarged story content
+    const popupHTML = `
+      <h2>${story.title}</h2>
+      ${story.text.map(p => `<p>${p}</p>`).join('')}
+      <div class="vocab"><strong>Wortschatz:</strong> ${story.vocab.join(', ')}.</div>
+    `;
+    
+    content.innerHTML = popupHTML;
+    overlay.style.display = 'flex';
+    
+    // Prevent scrolling on body
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeStoryPopup() {
+    const overlay = document.getElementById('storyPopupOverlay');
+    overlay.style.display = 'none';
+    document.body.style.overflow = 'auto';
+  }
+
   // ----- ARCHIVE SYSTEM -----
   function saveToArchive(date, stories) {
     try {
@@ -341,9 +468,12 @@
       const storiesEl = document.getElementById('stories');
       storiesEl.innerHTML = '';
       
-      stories.forEach(s => {
+      stories.forEach((s, index) => {
         const art = document.createElement('article'); 
         art.className = 'story';
+        
+        // Add data attribute for story index
+        art.dataset.storyIndex = index;
         
         const h = document.createElement('h2'); 
         h.textContent = s.title;
@@ -363,6 +493,9 @@
         storiesEl.appendChild(art);
       });
       
+      // Add event listeners for story popup on large screens
+      setupStoryClickListeners();
+      
       // Add back button
       const backBtn = document.createElement('button');
       backBtn.className = 'btn';
@@ -371,6 +504,38 @@
       backBtn.onclick = displayStories;
       storiesEl.appendChild(backBtn);
     }
+  }
+
+  // ----- SETUP STORY CLICK LISTENERS -----
+  function setupStoryClickListeners() {
+    const stories = document.querySelectorAll('.story');
+    
+    // Check if screen is large enough (greater than typical laptop)
+    const isLargeScreen = window.innerWidth >= 1367;
+    
+    stories.forEach((storyEl, index) => {
+      if (isLargeScreen) {
+        storyEl.style.cursor = 'pointer';
+        storyEl.addEventListener('click', function() {
+          // Get the story data
+          const storyTitle = this.querySelector('h2').textContent;
+          const storyParagraphs = Array.from(this.querySelectorAll('p')).map(p => p.textContent);
+          const vocabText = this.querySelector('.vocab').textContent.replace('Wortschatz: ', '').replace('.', '');
+          const vocabArray = vocabText.split(', ');
+          
+          const storyData = {
+            title: storyTitle,
+            text: storyParagraphs,
+            vocab: vocabArray
+          };
+          
+          showStoryPopup(storyData);
+        });
+      } else {
+        storyEl.style.cursor = 'default';
+        storyEl.onclick = null;
+      }
+    });
   }
 
   // ----- UPDATE GENERATION TIME -----
@@ -392,9 +557,12 @@
     const storiesEl = document.getElementById('stories');
     storiesEl.innerHTML='';
     
-    stories.forEach(s => {
+    stories.forEach((s, index) => {
       const art = document.createElement('article'); 
       art.className = 'story';
+      
+      // Add data attribute for story index
+      art.dataset.storyIndex = index;
       
       const h = document.createElement('h2'); 
       h.textContent = s.title;
@@ -414,6 +582,9 @@
       storiesEl.appendChild(art);
     });
     
+    // Setup click listeners for story popup
+    setupStoryClickListeners();
+    
     // Save to archive
     saveToArchive(dateStr, stories);
     updateGenerationTime();
@@ -430,11 +601,34 @@
       document.getElementById('archiveModal').style.display = 'none';
     });
     
+    // Story popup close buttons
+    document.getElementById('closePopupBtn').addEventListener('click', closeStoryPopup);
+    
+    // Close popup when clicking outside the popup content
+    document.getElementById('storyPopupOverlay').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeStoryPopup();
+      }
+    });
+    
+    // Close popup with Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeStoryPopup();
+        document.getElementById('archiveModal').style.display = 'none';
+      }
+    });
+    
     // Close modal when clicking outside
     document.getElementById('archiveModal').addEventListener('click', function(e) {
       if (e.target === this) {
         this.style.display = 'none';
       }
+    });
+    
+    // Re-setup click listeners on window resize
+    window.addEventListener('resize', function() {
+      setTimeout(setupStoryClickListeners, 100);
     });
     
     // Auto-refresh every minute

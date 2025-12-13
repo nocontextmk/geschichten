@@ -21,7 +21,7 @@
     article.story p{margin:0 0 14px;line-height:1.6;font-size:17px}
     .vocab{margin-top:12px;font-size:14px;color:var(--muted)}
     
-    /* Story popup styles */
+    /* Story popup styles - САМО ЗА ДЕСКТОП */
     .story-popup-overlay {
       display: none;
       position: fixed;
@@ -95,12 +95,23 @@
       color: #333;
     }
     
-    /* Only enable click-to-enlarge on larger screens */
+    /* НЕМА ПОПАП НА МОБИЛНИ И ТАБЛЕТ УРЕДИ */
     @media (max-width: 1366px) {
-      article.story { cursor: default !important; }
-      article.story:hover { transform: none !important; }
+      .story-popup-overlay {
+        display: none !important;
+      }
+      
+      article.story { 
+        cursor: default !important; 
+      }
+      article.story:hover { 
+        transform: none !important; 
+        box-shadow: 0 1px 0 rgba(0,0,0,0.04) !important;
+        border-color: #e0e0e0 !important;
+      }
     }
     
+    /* ПОПАП САМО ЗА ДЕСКТОП */
     @media (min-width: 1367px) {
       article.story {
         cursor: pointer;
@@ -188,41 +199,11 @@
       .footer-content{flex-direction:column;gap:16px}
       .footer-right{text-align:left;width:100%}
       .footer-buttons{justify-content:flex-start}
-      
-      /* Мобилна верзија за попап - останува иста */
-      .story-popup {
-        padding: 30px !important;
-        max-width: 95% !important;
-      }
-      
-      .story-popup-content h2 {
-        font-size: 24px !important;
-        margin-bottom: 18px !important;
-      }
-      
-      .story-popup-content p {
-        font-size: 18px !important;
-        line-height: 1.6 !important;
-        margin-bottom: 16px !important;
-      }
-      
-      .story-popup-content .vocab {
-        font-size: 16px !important;
-        margin-top: 24px !important;
-      }
-      
-      .close-popup-btn {
-        top: 15px !important;
-        right: 15px !important;
-        font-size: 28px !important;
-        width: 40px !important;
-        height: 40px !important;
-      }
     }
   </style>
 </head>
 <body>
-  <!-- Story Popup Overlay -->
+  <!-- Story Popup Overlay - САМО ЗА ДЕСКТОП -->
   <div class="story-popup-overlay" id="storyPopupOverlay">
     <div class="story-popup">
       <button class="close-popup-btn" id="closePopupBtn">&times;</button>
@@ -432,8 +413,11 @@
     ];
   }
 
-  // ----- STORY POPUP FUNCTIONS -----
+  // ----- STORY POPUP FUNCTIONS - САМО ЗА ДЕСКТОП -----
   function showStoryPopup(story) {
+    // Проверка дали е десктоп
+    if (window.innerWidth < 1367) return; // Не прави ништо на мобилни/таблет
+    
     const overlay = document.getElementById('storyPopupOverlay');
     const content = document.getElementById('storyPopupContent');
     
@@ -570,15 +554,15 @@
     }
   }
 
-  // ----- SETUP STORY CLICK LISTENERS -----
+  // ----- SETUP STORY CLICK LISTENERS - САМО ЗА ДЕСКТОП -----
   function setupStoryClickListeners() {
     const stories = document.querySelectorAll('.story');
     
-    // Check if screen is large enough (greater than typical laptop)
-    const isLargeScreen = window.innerWidth >= 1367;
+    // Check if screen is large enough (desktop)
+    const isDesktop = window.innerWidth >= 1367;
     
     stories.forEach((storyEl, index) => {
-      if (isLargeScreen) {
+      if (isDesktop) {
         storyEl.style.cursor = 'pointer';
         storyEl.addEventListener('click', function() {
           // Get the story data
@@ -596,8 +580,10 @@
           showStoryPopup(storyData);
         });
       } else {
+        // На мобилни/таблет - нема клик и нема hover ефекти
         storyEl.style.cursor = 'default';
         storyEl.onclick = null;
+        storyEl.style.pointerEvents = 'auto';
       }
     });
   }
@@ -646,7 +632,7 @@
       storiesEl.appendChild(art);
     });
     
-    // Setup click listeners for story popup
+    // Setup click listeners for story popup (само на десктоп)
     setupStoryClickListeners();
     
     // Save to archive
@@ -658,32 +644,36 @@
   document.addEventListener('DOMContentLoaded', function() {
     displayStories();
     
-    // Event Listeners
+    // Event Listeners за архива и печатење (работи на сите уреди)
     document.getElementById('printBtn').addEventListener('click', () => window.print());
     document.getElementById('archiveBtn').addEventListener('click', showArchiveModal);
     document.getElementById('closeModal').addEventListener('click', function() {
       document.getElementById('archiveModal').style.display = 'none';
     });
     
-    // Story popup close buttons
-    document.getElementById('closePopupBtn').addEventListener('click', closeStoryPopup);
+    // Story popup close buttons (само на десктоп)
+    if (window.innerWidth >= 1367) {
+      document.getElementById('closePopupBtn').addEventListener('click', closeStoryPopup);
+      
+      // Close popup when clicking outside the popup content
+      document.getElementById('storyPopupOverlay').addEventListener('click', function(e) {
+        if (e.target === this) {
+          closeStoryPopup();
+        }
+      });
+    }
     
-    // Close popup when clicking outside the popup content
-    document.getElementById('storyPopupOverlay').addEventListener('click', function(e) {
-      if (e.target === this) {
-        closeStoryPopup();
-      }
-    });
-    
-    // Close popup with Escape key
+    // Close popup/modal with Escape key (работи на сите уреди)
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') {
-        closeStoryPopup();
+        if (window.innerWidth >= 1367) {
+          closeStoryPopup();
+        }
         document.getElementById('archiveModal').style.display = 'none';
       }
     });
     
-    // Close modal when clicking outside
+    // Close modal when clicking outside (работи на сите уреди)
     document.getElementById('archiveModal').addEventListener('click', function(e) {
       if (e.target === this) {
         this.style.display = 'none';

@@ -1,264 +1,640 @@
 <!doctype html>
 <html lang="de">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Kurzgeschichten Luzern — jeden Tag</title>
-
-<style>
-:root{
-  --maxw:720px;
-  --bg:#ffffff;
-  --text:#0a0a0a;
-  --muted:#5a5a5a;
-  --accent:#0b5ed7;
-  --paper:#fbfbfb;
-  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
-}
-
-html,body{margin:0;background:var(--bg);color:var(--text)}
-
-.wrap{
-  max-width:var(--maxw);
-  margin:28px auto;
-  padding:28px;
-  background:var(--paper);
-  border-radius:14px;
-  box-shadow:0 6px 24px rgba(0,0,0,0.06);
-}
-
-header{display:flex;gap:12px;align-items:center}
-h1{margin:0;font-size:22px}
-.lead{color:var(--muted);font-size:15px;margin-top:6px}
-
-.meta{font-size:13px;color:var(--muted);margin:20px 0}
-
-.stories{display:flex;flex-direction:column;gap:18px}
-
-.story{
-  background:#fff;
-  padding:18px;
-  border-radius:10px;
-  border:1px solid #e0e0e0;
-  transition:transform .3s ease, box-shadow .3s ease;
-}
-
-.story h2{margin:0 0 12px;font-size:18px}
-.story p{font-size:17px;line-height:1.6;margin:0 0 14px}
-
-.vocab{font-size:14px;color:var(--muted);margin-top:10px}
-
-@media (min-width:1400px){
-  .story{cursor:pointer}
-  .story:hover{
-    transform:translateY(-5px);
-    box-shadow:0 12px 32px rgba(0,0,0,.1);
-    border-color:var(--accent);
-  }
-}
-
-/* POPUP */
-.story-popup-overlay{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.8);
-  z-index:2000;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-}
-
-.story-popup{
-  background:white;
-  max-width:900px;
-  max-height:90vh;
-  padding:40px;
-  border-radius:20px;
-  overflow-y:auto;
-  position:relative;
-}
-
-.story-popup h2{font-size:32px;color:var(--accent)}
-.story-popup p{font-size:24px;line-height:1.8}
-
-.close-popup{
-  position:absolute;
-  top:16px;
-  right:16px;
-  font-size:36px;
-  background:none;
-  border:none;
-  cursor:pointer;
-}
-
-/* FOOTER */
-.main-footer{
-  margin-top:32px;
-  padding-top:24px;
-  border-top:1px solid #eee;
-}
-
-.footer-content{
-  display:flex;
-  justify-content:space-between;
-  flex-wrap:wrap;
-  gap:24px;
-}
-
-.footer-left{flex:1;min-width:220px}
-.footer-right{text-align:right}
-
-.footer-info{
-  font-size:12px;
-  color:var(--muted);
-  line-height:1.5;
-}
-
-.footer-buttons{display:flex;gap:10px}
-
-.btn{
-  background:transparent;
-  border:1px solid var(--accent);
-  color:var(--accent);
-  padding:6px 12px;
-  border-radius:8px;
-  cursor:pointer;
-}
-
-.footer-meta{
-  font-size:11px;
-  color:#888;
-  margin-top:16px;
-  padding-top:12px;
-  border-top:1px solid #f0f0f0;
-}
-
-@media(max-width:600px){
-  .footer-content{flex-direction:column}
-  .footer-right{text-align:left}
-}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Kurzgeschichten Luzern — jeden Tag</title>
+  <style>
+    :root{
+      --maxw:720px; --bg:#fff; --text:#0a0a0a; --muted:#5a5a5a; --accent:#0b5ed7; --paper:#fbfbfb;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    html,body{height:100%;margin:0;background:var(--bg);color:var(--text)}
+    .wrap{max-width:var(--maxw);margin:28px auto;padding:28px;background:var(--paper);border-radius:14px;box-shadow:0 6px 24px rgba(10,10,10,0.06)}
+    header{display:flex;align-items:center;gap:12px}
+    h1{font-size:22px;margin:0}
+    p.lead{margin:8px 0 18px;color:var(--muted);font-size:15px}
+    .meta{font-size:13px;color:var(--muted);margin-bottom:18px}
+    .stories{display:flex;flex-direction:column;gap:18px}
+    article.story{padding:18px;border-radius:10px;background:white;box-shadow:0 1px 0 rgba(0,0,0,0.04);border:1px solid #e0e0e0;transition:all 0.3s ease}
+    article.story h2{margin:0 0 12px;font-size:18px}
+    article.story p{margin:0 0 14px;line-height:1.6;font-size:17px}
+    .vocab{margin-top:12px;font-size:14px;color:var(--muted)}
+    
+    /* Story popup styles */
+    .story-popup-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .story-popup {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 90%;
+      max-height: 90%;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      animation: popupFade 0.3s ease;
+    }
+    
+    @keyframes popupFade {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    
+    .story-popup-content h2 {
+      font-size: 32px !important;
+      margin-bottom: 24px !important;
+      color: #0b5ed7;
+    }
+    
+    .story-popup-content p {
+      font-size: 24px !important;
+      line-height: 1.8 !important;
+      margin-bottom: 20px !important;
+    }
+    
+    .story-popup-content .vocab {
+      font-size: 20px !important;
+      margin-top: 30px !important;
+      padding-top: 20px;
+      border-top: 2px solid #eee;
+    }
+    
+    .close-popup-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: none;
+      font-size: 36px;
+      color: var(--muted);
+      cursor: pointer;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: all 0.2s ease;
+    }
+    
+    .close-popup-btn:hover {
+      background: #f5f5f5;
+      color: #333;
+    }
+    
+    /* Only enable click-to-enlarge on larger screens */
+    @media (max-width: 1366px) {
+      article.story { cursor: default !important; }
+      article.story:hover { transform: none !important; }
+    }
+    
+    @media (min-width: 1367px) {
+      article.story {
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      article.story:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border-color: #0b5ed7;
+      }
+    }
+    
+    /* Footer styles - ОРИГИНАЛНИТЕ СТИЛОВИ ЗА ФУТЕР */
+    .main-footer{margin-top:32px;padding-top:24px;border-top:1px solid #eee}
+    .footer-content{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:24px}
+    .footer-left{flex:1;min-width:200px}
+    .footer-right{text-align:right}
+    .footer-buttons{display:flex;gap:10px}
+    
+    .footer-info{font-size:12px;line-height:1.5;color:var(--muted)}
+    .footer-info p{margin:0 0 8px 0}
+    .footer-links{display:flex;gap:16px;margin-top:12px}
+    .footer-links a{color:var(--accent);text-decoration:none;font-size:12px}
+    .footer-links a:hover{text-decoration:underline}
+    
+    .footer-meta{font-size:11px;color:#888;margin-top:16px;padding-top:12px;border-top:1px solid #f0f0f0}
+    .footer-meta span{display:inline-block;margin-right:12px}
+    
+    .project-badge{display:inline-flex;align-items:center;gap:4px;background:#f5f5f5;padding:4px 8px;border-radius:4px;font-size:11px;color:#666;margin-bottom:8px}
+    .project-badge::before{content:"⚡";font-size:10px}
+    
+    .small{font-size:12px;color:var(--muted)}
+    .btn{background:transparent;border:1px solid var(--accent);color:var(--accent);padding:6px 12px;border-radius:8px;font-size:13px;cursor:pointer;transition:all 0.2s ease}
+    .btn:hover{background:rgba(11, 94, 215, 0.08);transform:translateY(-1px)}
+    
+    /* Archive Modal Styles */
+    .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center}
+    .modal-content{background:var(--paper);padding:28px;border-radius:14px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto}
+    .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+    .modal-title{font-size:18px;font-weight:600;margin:0}
+    .close-btn{background:none;border:none;font-size:24px;cursor:pointer;color:var(--muted)}
+    .archive-list{display:flex;flex-direction:column;gap:12px}
+    .archive-item{padding:14px;border:1px solid #eee;border-radius:8px;cursor:pointer;transition:all 0.2s ease}
+    .archive-item:hover{background:#f9f9f9;border-color:#ddd;transform:translateY(-1px)}
+    .archive-date{font-weight:600;margin-bottom:4px}
+    .archive-titles{font-size:13px;color:var(--muted)}
+    
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+      .wrap{padding:20px;margin:15px auto;}
+      .footer-content{flex-direction:column;gap:16px}
+      .footer-right{text-align:left;width:100%}
+      .footer-buttons{justify-content:flex-start}
+    }
+  </style>
 </head>
-
 <body>
-
-<div class="story-popup-overlay" id="popup">
-  <div class="story-popup">
-    <button class="close-popup" id="closePopup">&times;</button>
-    <div id="popupContent"></div>
-  </div>
-</div>
-
-<main class="wrap">
-<header>
-<svg width="40" height="40" viewBox="0 0 24 24">
-<rect x="1.5" y="3" width="21" height="18" rx="3" fill="#0b5ed7"/>
-</svg>
-<div>
-<h1>Kurzgeschichten Luzern</h1>
-<p class="lead">Zwei kurze, kindgerechte Geschichten auf Deutsch – jeden Tag.</p>
-</div>
-</header>
-
-<div class="meta" id="meta"></div>
-<section class="stories" id="stories"></section>
-
-<footer class="main-footer">
-  <div class="footer-content">
-    <div class="footer-left">
-      <div class="footer-info">
-        <p>Ein pädagogisches Projekt für Kinder (ca. 8 Jahre).</p>
-        <p>Region: Zentralschweiz · Sprache: Deutsch</p>
-      </div>
-    </div>
-    <div class="footer-right">
-      <div class="footer-buttons">
-        <button class="btn" onclick="window.print()">Drucken</button>
-      </div>
-      <div style="font-size:12px;color:var(--muted);margin-top:10px">
-        Generiert um <span id="genTime">--:--</span> Uhr<br>
-        Zeitzone: Europe/Zurich
+  <!-- Story Popup Overlay -->
+  <div class="story-popup-overlay" id="storyPopupOverlay">
+    <div class="story-popup">
+      <button class="close-popup-btn" id="closePopupBtn">&times;</button>
+      <div class="story-popup-content" id="storyPopupContent">
+        <!-- Popup content will be inserted here -->
       </div>
     </div>
   </div>
 
-  <div class="footer-meta">
-    <span>Version 1.0.0</span> ·
-    <span>MIT License</span> ·
-    <span>© 2025 Kurzgeschichten Luzern</span>
+  <main class="wrap" role="main" aria-labelledby="title">
+    <header>
+      <svg width="44" height="44" viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="1.5" y="3" width="21" height="18" rx="3" fill="#0b5ed7" />
+        <circle cx="7.5" cy="10" r="1.6" fill="#fff" />
+        <circle cx="16.5" cy="14" r="1.6" fill="#fff" />
+      </svg>
+      <div>
+        <h1 id="title">Kurzgeschichten Luzern</h1>
+        <p class="lead">Jeden Tag zwei kurze Geschichten auf Deutsch — kindgerecht (≈ 8 Jahre). Klarer Text, kurze Absätze, Lernwörter.</p>
+      </div>
+    </header>
+
+    <div class="meta" id="meta">...lade...</div>
+
+    <section class="stories" id="stories" aria-live="polite"></section>
+
+    <footer class="main-footer">
+      <div class="footer-content">
+        <div class="footer-left">
+          <div class="project-badge">Open Source Project</div>
+          <div class="footer-info">
+            <p>Ein pädagogisches Tool für Deutschlernende im Alter von 6–10 Jahren.</p>
+            <p>Kompatibel mit Schweizer Lehrplänen für die Primarstufe.</p>
+            <p>Generiert täglich neue Geschichten anhand des aktuellen Datums.</p>
+            
+            <div class="footer-links">
+              <a href="#" onclick="event.preventDefault(); alert('GitHub Repository wird bald verfügbar sein')">GitHub</a>
+              <a href="#" onclick="event.preventDefault(); alert('Dokumentation wird bald verfügbar sein')">Docs</a>
+              <a href="#" onclick="event.preventDefault(); alert('Beiträge willkommen! Kontaktieren Sie uns.')">Contributing</a>
+              <a href="#" onclick="event.preventDefault(); alert('Für Fragen oder Feedback')">Contact</a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-right">
+          <div class="footer-buttons">
+            <button class="btn" id="archiveBtn">Archiv</button>
+            <button class="btn" id="printBtn">Drucken</button>
+          </div>
+          <div class="small" style="margin-top:12px">
+            Generiert: <span id="genTime">--:--</span> Uhr<br>
+            Zeitzone: Europe/Zurich
+          </div>
+        </div>
+      </div>
+      
+      <div class="footer-meta">
+        <span>Version 1.0.0</span>
+        <span>MIT License</span>
+        <span>© 2025 Kurzgeschichten Luzern</span>
+      </div>
+    </footer>
+  </main>
+
+  <!-- Archive Modal -->
+  <div class="modal" id="archiveModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Geschichten Archiv</h2>
+        <button class="close-btn" id="closeModal">&times;</button>
+      </div>
+      <div class="archive-list" id="archiveList">
+        <!-- Archive items will be loaded here -->
+      </div>
+      <div style="margin-top:20px;font-size:13px;color:var(--muted);text-align:center">
+        Wählen Sie ein Datum, um die Geschichten erneut anzuzeigen.
+      </div>
+    </div>
   </div>
-</footer>
-</main>
 
-<script>
-function zurichNow(){
-  const f=new Intl.DateTimeFormat("de-CH",{timeZone:"Europe/Zurich",hour:"2-digit",minute:"2-digit"});
-  return f.format(new Date());
-}
+  <script>
+  // ----- UTILITY FUNCTIONS -----
+  function zurichNow() {
+    const fmt = new Intl.DateTimeFormat('de-DE', {
+      timeZone: 'Europe/Zurich',
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit',
+      hour12: false
+    });
+    const parts = fmt.formatToParts(new Date());
+    const get = (t) => parts.find(p => p.type===t).value;
+    const s = `${get('year')}-${get('month')}-${get('day')}T${get('hour')}:${get('minute')}:${get('second')}`;
+    return new Date(s);
+  }
 
-function seededRandom(seed){
-  let h=2166136261>>>0;
-  for(let c of seed) h=(h^c.charCodeAt(0))*16777619>>>0;
-  return()=>((h=h*1664525+1013904223>>>0)/4294967296);
-}
+  function pad(n){return n.toString().padStart(2,'0')}
+  function dateSeedKey(d) { return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()); }
+  function formatDateDisplay(d) {
+    const fmt = new Intl.DateTimeFormat('de-DE', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    return fmt.format(d);
+  }
+  
+  function seededRandom(seed) {
+    let h = 2166136261 >>> 0;
+    for (let i=0;i<seed.length;i++) h = (h ^ seed.charCodeAt(i)) * 16777619 >>> 0;
+    let state = h;
+    return function() { state = (state * 1664525 + 1013904223) >>> 0; return state / 4294967296; }
+  }
 
-const namen=["Mia","Lukas","Emma","Noah","Lea","Ben"];
-const orte=["Luzern","dem See","der Altstadt","dem Park","dem Wald"];
-const objekte=["Ball","Buch","Rucksack","Schlüssel"];
-const gefuehle=["glücklich","neugierig","stolz","mutig"];
+  // ----- VOCABULARY AND THEMES -----
+  const vocab = {
+    personen: ["Mia","Lukas","Paula","Jonas","Sara","Noah","Ben","Emma","Lea","Finn","Lina","Leo","Hanna","Luis","Marie"],
+    orte: ["Luzern","See","Pilatus","Altstadt","Schule","Spielplatz","Bibliothek","Markt","Wald","Brücke","Bahnhof","Park","Turnhalle","Bauernhof","Schwimmbad"],
+    gegenstaende: ["Velo","Ball","Buch","Rucksack","Lampe","Brille","Schlüssel","Luftballon","Korb","Schirm","Tafel","Stift","Federmäppchen","Pausenbrot","Wasserflasche"],
+    tiere: ["Hund","Katze","Ente","Fisch","Kuh","Ameise","Schmetterling","Igel","Vogel","Libelle","Hase","Biene","Schnecke","Maulwurf","Frosch"],
+    aktivitaeten: ["fahren","lesen","spielen","rennen","malen","lernen","singen","suchen","bauen","helfen","zählen","basteln","tanzen","erzählen","beobachten"],
+    gefuehle: ["glücklich","neugierig","mutig","ruhig","aufgeregt","stolz","freundlich","geduldig","fröhlich","zufrieden","hilfsbereit","konzentriert","entspannt","tapfer","fürsorglich"],
+    lehrthemen: ["Natur","Wetter","Verkehrssicherheit","Zahlen","Lesen","Freundschaft","Farben","Tiere","Berufe","Musik","Gesundheit","Umwelt","Gemeinschaft","Zeit","Formen"]
+  };
 
-let aktuelleStories=[];
-
-function anzeigen(){
-  const d=new Date().toISOString().slice(0,10);
-  const rng=seededRandom(d);
-  aktuelleStories=[1,2].map(n=>({
-    title:`${n}. Eine kleine Geschichte`,
-    text:[
-      `${namen[Math.floor(rng()*6)]} ging an einem sonnigen Tag nach ${orte[Math.floor(rng()*5)]}.`,
-      `Dort fand das Kind einen ${objekte[Math.floor(rng()*4)]}.`,
-      `Es war ${gefuehle[Math.floor(rng()*4)]} und dachte nach.`,
-      `Am Ende lernte es etwas Wichtiges.`
+  const themen = {
+    kurzgeschichten: [
+      "Der vergessene Schlüssel",
+      "Ein besonderer Fund",
+      "Die mutige Entscheidung",
+      "Eine kleine Überraschung",
+      "Freundschaft im Park",
+      "Das geheimnisvolle Geräusch",
+      "Ein Tag voller Farben",
+      "Die hilfsbereite Geste",
+      "Ein unerwartetes Abenteuer",
+      "Das Lächeln eines Fremden",
+      "Die geheimnisvolle Karte",
+      "Ein Tag am See",
+      "Die mutige Katze",
+      "Das besondere Geschenk",
+      "Abenteuer im Wald",
+      "Der hilfsbereite Nachbar",
+      "Eine Entdeckung im Garten",
+      "Das fröhliche Picknick",
+      "Die verlorene Brille",
+      "Ein Regentag voller Ideen"
     ]
-  }));
+  };
 
-  document.getElementById("meta").textContent=`Datum: ${d} · Zwei kurze Geschichten`;
-  document.getElementById("genTime").textContent=zurichNow();
+  // ----- STORY GENERATION -----
+  function choose(rng, arr){ return arr[Math.floor(rng()*arr.length)]; }
 
-  const s=document.getElementById("stories");
-  s.innerHTML="";
-  aktuelleStories.forEach((st,i)=>{
-    const a=document.createElement("article");
-    a.className="story";
-    a.dataset.index=i;
-    a.innerHTML=`<h2>${st.title}</h2>${st.text.map(t=>`<p>${t}</p>`).join("")}`;
-    s.appendChild(a);
+  function generateShortStory(rng, storyNum) {
+    const name = choose(rng,vocab.personen);
+    const place = choose(rng,vocab.orte);
+    const object = choose(rng,vocab.gegenstaende);
+    const animal = choose(rng,vocab.tiere);
+    const feeling = choose(rng,vocab.gefuehle);
+    const title = choose(rng,themen.kurzgeschichten);
+
+    const sentences = [
+      `${name} ging an einem sonnigen Tag zum ${place}.`,
+      `Plötzlich fand ${name} einen ${object} auf dem Boden.`,
+      `${name} war ${feeling} und überlegte, wem der ${object} gehören könnte.`,
+      `Auf der Suche nach dem Besitzer traf ${name} eine kleine ${animal}.`,
+      `Die ${animal} sah freundlich aus und folgte ${name} ein Stück.`,
+      `Zum Glück fand ${name} die Besitzerin des ${object} am ${place}.`,
+      `Es war eine ältere Frau, die sehr dankbar war.`,
+      `${name} fühlte sich ${feeling} und lächelte den ganzen Weg nach Hause.`,
+      `Am nächsten Tag erzählte ${name} die Geschichte in der Schule.`,
+      `Alle Kinder waren beeindruckt von ${name}s Erlebnis.`,
+      `Die Lehrerin lobte ${name} für die hilfsbereite Tat.`,
+      `${name} zeigte den ${object} allen in der Klasse.`,
+      `Gemeinsam überlegten sie, was man mit einem ${object} alles machen kann.`,
+      `Zum Schluss malten alle ein Bild von der Begegnung mit der ${animal}.`,
+      `${name} beschloss, immer aufmerksam durch die Welt zu gehen.`
+    ];
+
+    const sentenceCount = 4 + Math.floor(rng() * 3);
+    const shuffled = [...sentences].sort(() => rng() - 0.5);
+    const storyText = shuffled.slice(0, sentenceCount);
+
+    return {
+      title: storyNum === 1 ? `1. ${title}` : `2. ${title}`,
+      text: storyText,
+      vocab: extractVocab(storyText)
+    };
+  }
+
+  function extractVocab(lines){
+    const words = new Set();
+    lines.forEach(L => {
+      L.replace(/[,\.!?:;]/g,'').split(/\s+/).forEach(w => { 
+        const w2 = w.trim(); 
+        if(w2.length > 0 && w2.length <= 12) words.add(w2); 
+      });
+    });
+    return Array.from(words);
+  }
+
+  function storiesForDate(d){
+    const key = dateSeedKey(d);
+    const rng = seededRandom(key);
+    return [
+      generateShortStory(rng, 1),
+      generateShortStory(rng, 2)
+    ];
+  }
+
+  // ----- STORY POPUP FUNCTIONS -----
+  function showStoryPopup(story) {
+    const overlay = document.getElementById('storyPopupOverlay');
+    const content = document.getElementById('storyPopupContent');
+    
+    // Create enlarged story content
+    const popupHTML = `
+      <h2>${story.title}</h2>
+      ${story.text.map(p => `<p>${p}</p>`).join('')}
+      <div class="vocab"><strong>Wortschatz:</strong> ${story.vocab.join(', ')}.</div>
+    `;
+    
+    content.innerHTML = popupHTML;
+    overlay.style.display = 'flex';
+    
+    // Prevent scrolling on body
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeStoryPopup() {
+    const overlay = document.getElementById('storyPopupOverlay');
+    overlay.style.display = 'none';
+    document.body.style.overflow = 'auto';
+  }
+
+  // ----- ARCHIVE SYSTEM -----
+  function saveToArchive(date, stories) {
+    try {
+      const archive = JSON.parse(localStorage.getItem('storyArchive') || '{}');
+      if (!archive[date]) {
+        archive[date] = {
+          date: date,
+          displayDate: formatDateDisplay(new Date(date + 'T12:00:00')),
+          stories: stories.map(s => ({
+            title: s.title,
+            text: s.text,
+            vocab: s.vocab
+          }))
+        };
+        localStorage.setItem('storyArchive', JSON.stringify(archive));
+      }
+    } catch (e) {
+      console.error('Error saving to archive:', e);
+    }
+  }
+
+  function loadArchive() {
+    try {
+      return JSON.parse(localStorage.getItem('storyArchive') || '{}');
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function showArchiveModal() {
+    const archive = loadArchive();
+    const archiveList = document.getElementById('archiveList');
+    const modal = document.getElementById('archiveModal');
+    
+    // Get sorted dates (newest first)
+    const dates = Object.keys(archive).sort().reverse();
+    
+    if (dates.length === 0) {
+      archiveList.innerHTML = '<p style="text-align:center;color:var(--muted);">Noch keine Geschichten im Archiv.</p>';
+    } else {
+      archiveList.innerHTML = dates.map(date => {
+        const item = archive[date];
+        return `
+          <div class="archive-item" data-date="${date}">
+            <div class="archive-date">${item.displayDate}</div>
+            <div class="archive-titles">
+              ${item.stories.map(s => s.title.replace('1. ', '').replace('2. ', '')).join(' • ')}
+            </div>
+          </div>
+        `;
+      }).join('');
+      
+      // Add click handlers
+      document.querySelectorAll('.archive-item').forEach(item => {
+        item.addEventListener('click', function() {
+          const date = this.getAttribute('data-date');
+          loadArchiveStories(date);
+          modal.style.display = 'none';
+        });
+      });
+    }
+    
+    modal.style.display = 'flex';
+  }
+
+  function loadArchiveStories(date) {
+    const archive = loadArchive();
+    const stories = archive[date]?.stories;
+    
+    if (stories) {
+      document.getElementById('meta').textContent = `Archiv: ${archive[date].displayDate} · Zwei kurze Geschichten.`;
+      
+      const storiesEl = document.getElementById('stories');
+      storiesEl.innerHTML = '';
+      
+      stories.forEach((s, index) => {
+        const art = document.createElement('article'); 
+        art.className = 'story';
+        
+        // Add data attribute for story index
+        art.dataset.storyIndex = index;
+        
+        const h = document.createElement('h2'); 
+        h.textContent = s.title;
+        art.appendChild(h);
+        
+        s.text.forEach(p => {
+          const pEl = document.createElement('p'); 
+          pEl.textContent = p; 
+          art.appendChild(pEl);
+        });
+        
+        const vocabBox = document.createElement('div'); 
+        vocabBox.className = 'vocab';
+        vocabBox.innerHTML = `<strong>Wortschatz:</strong> ${s.vocab.join(', ')}.`;
+        art.appendChild(vocabBox);
+        
+        storiesEl.appendChild(art);
+      });
+      
+      // Add event listeners for story popup on large screens
+      setupStoryClickListeners();
+      
+      // Add back button
+      const backBtn = document.createElement('button');
+      backBtn.className = 'btn';
+      backBtn.textContent = '← Zurück zu heute';
+      backBtn.style.marginTop = '20px';
+      backBtn.onclick = displayStories;
+      storiesEl.appendChild(backBtn);
+    }
+  }
+
+  // ----- SETUP STORY CLICK LISTENERS -----
+  function setupStoryClickListeners() {
+    const stories = document.querySelectorAll('.story');
+    
+    // Check if screen is large enough (greater than typical laptop)
+    const isLargeScreen = window.innerWidth >= 1367;
+    
+    stories.forEach((storyEl, index) => {
+      if (isLargeScreen) {
+        storyEl.style.cursor = 'pointer';
+        storyEl.addEventListener('click', function() {
+          // Get the story data
+          const storyTitle = this.querySelector('h2').textContent;
+          const storyParagraphs = Array.from(this.querySelectorAll('p')).map(p => p.textContent);
+          const vocabText = this.querySelector('.vocab').textContent.replace('Wortschatz: ', '').replace('.', '');
+          const vocabArray = vocabText.split(', ');
+          
+          const storyData = {
+            title: storyTitle,
+            text: storyParagraphs,
+            vocab: vocabArray
+          };
+          
+          showStoryPopup(storyData);
+        });
+      } else {
+        storyEl.style.cursor = 'default';
+        storyEl.onclick = null;
+      }
+    });
+  }
+
+  // ----- UPDATE GENERATION TIME -----
+  function updateGenerationTime() {
+    const now = zurichNow();
+    const timeStr = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+    document.getElementById('genTime').textContent = timeStr;
+  }
+
+  // ----- MAIN DISPLAY -----
+  function displayStories() {
+    const now = zurichNow();
+    const showDate = now.getHours() >= 15 ? now : new Date(now.getTime() - 24*3600*1000);
+    const dateStr = dateSeedKey(showDate);
+    const stories = storiesForDate(showDate);
+
+    document.getElementById('meta').textContent = `Datum: ${dateStr} · Zwei kurze Geschichten (je 4-6 Sätze). Angezeigt ab 15:00 (Zeitzone Zürich).`;
+
+    const storiesEl = document.getElementById('stories');
+    storiesEl.innerHTML='';
+    
+    stories.forEach((s, index) => {
+      const art = document.createElement('article'); 
+      art.className = 'story';
+      
+      // Add data attribute for story index
+      art.dataset.storyIndex = index;
+      
+      const h = document.createElement('h2'); 
+      h.textContent = s.title;
+      art.appendChild(h);
+      
+      s.text.forEach(p => {
+        const pEl = document.createElement('p'); 
+        pEl.textContent = p; 
+        art.appendChild(pEl);
+      });
+      
+      const vocabBox = document.createElement('div'); 
+      vocabBox.className = 'vocab';
+      vocabBox.innerHTML = `<strong>Wortschatz:</strong> ${s.vocab.join(', ')}.`;
+      art.appendChild(vocabBox);
+      
+      storiesEl.appendChild(art);
+    });
+    
+    // Setup click listeners for story popup
+    setupStoryClickListeners();
+    
+    // Save to archive
+    saveToArchive(dateStr, stories);
+    updateGenerationTime();
+  }
+
+  // ----- INITIALIZATION -----
+  document.addEventListener('DOMContentLoaded', function() {
+    displayStories();
+    
+    // Event Listeners
+    document.getElementById('printBtn').addEventListener('click', () => window.print());
+    document.getElementById('archiveBtn').addEventListener('click', showArchiveModal);
+    document.getElementById('closeModal').addEventListener('click', function() {
+      document.getElementById('archiveModal').style.display = 'none';
+    });
+    
+    // Story popup close buttons
+    document.getElementById('closePopupBtn').addEventListener('click', closeStoryPopup);
+    
+    // Close popup when clicking outside the popup content
+    document.getElementById('storyPopupOverlay').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeStoryPopup();
+      }
+    });
+    
+    // Close popup with Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeStoryPopup();
+        document.getElementById('archiveModal').style.display = 'none';
+      }
+    });
+    
+    // Close modal when clicking outside
+    document.getElementById('archiveModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        this.style.display = 'none';
+      }
+    });
+    
+    // Re-setup click listeners on window resize
+    window.addEventListener('resize', function() {
+      setTimeout(setupStoryClickListeners, 100);
+    });
+    
+    // Auto-refresh every minute
+    setInterval(displayStories, 60000);
+    setInterval(updateGenerationTime, 30000);
   });
-}
-
-document.getElementById("stories").onclick=e=>{
-  if(window.innerWidth<1400) return;
-  const a=e.target.closest(".story");
-  if(!a) return;
-  const st=aktuelleStories[a.dataset.index];
-  document.getElementById("popupContent").innerHTML=
-    `<h2>${st.title}</h2>${st.text.map(t=>`<p>${t}</p>`).join("")}`;
-  document.getElementById("popup").style.display="flex";
-  document.body.style.overflow="hidden";
-};
-
-document.getElementById("closePopup").onclick=()=>{
-  document.getElementById("popup").style.display="none";
-  document.body.style.overflow="auto";
-};
-
-document.getElementById("popup").onclick=e=>{
-  if(e.target.id==="popup") document.getElementById("closePopup").click();
-};
-
-anzeigen();
-</script>
-
+  </script>
 </body>
 </html>
